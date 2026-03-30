@@ -16,7 +16,7 @@ import logging
 from typing import Optional
 
 from dotenv import load_dotenv
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 
 # Import pattern agents
@@ -34,29 +34,32 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-def setup_llm() -> ChatGroq:
+def setup_llm() -> ChatOpenAI:
     """Initialize and return the LLM client."""
     load_dotenv(override=True)
 
     groq_api_key = os.getenv("GROQ_API_KEY")
+
     if not groq_api_key:
         logger.error("GROQ_API_KEY not found. Please set it in .env file.")
         sys.exit(1)
 
     try:
-        llm = ChatGroq(
+        # Use ChatOpenAI as a workaround for ChatGroq 401 issues in this environment
+        llm = ChatOpenAI(
+            model="llama-3.1-8b-instant",
             temperature=0,
-            model_name="llama-3.1-8b-instant",
-            groq_api_key=groq_api_key
+            api_key=groq_api_key,
+            base_url="https://api.groq.com/openai/v1"
         )
-        logger.info(f"✓ LLM initialized: {llm.model_name}")
+        logger.info(f"✓ LLM initialized: {llm.model_name} (via OpenAI bridge)")
         return llm
     except Exception as e:
         logger.error(f"Failed to initialize LLM: {e}")
         sys.exit(1)
 
 
-def run_linear_pattern(llm: ChatGroq) -> None:
+def run_linear_pattern(llm: ChatOpenAI) -> None:
     """Run Pattern 0: Linear Workflow - Health Report Agent."""
     print("\n" + "="*70)
     print("PATTERN 0: Linear Workflow (Health Report Agent)")
@@ -75,7 +78,7 @@ def run_linear_pattern(llm: ChatGroq) -> None:
     print("-"*70)
 
 
-def run_conditional_pattern(llm: ChatGroq) -> None:
+def run_conditional_pattern(llm: ChatOpenAI) -> None:
     """Run Pattern 1: Conditional Branching - Alert Router Agent."""
     print("\n" + "="*70)
     print("PATTERN 1: Conditional Branching (Alert Router Agent)")
@@ -103,7 +106,7 @@ def run_conditional_pattern(llm: ChatGroq) -> None:
     print("-"*70)
 
 
-def run_loop_pattern(llm: ChatGroq) -> None:
+def run_loop_pattern(llm: ChatOpenAI) -> None:
     """Run Pattern 2: Loop with Conditions - Log Investigator Agent."""
     print("\n" + "="*70)
     print("PATTERN 2: Loop with Conditions (Log Investigator Agent)")
@@ -133,7 +136,7 @@ def run_loop_pattern(llm: ChatGroq) -> None:
     print("-"*70)
 
 
-def run_human_loop_pattern(llm: ChatGroq) -> None:
+def run_human_loop_pattern(llm: ChatOpenAI) -> None:
     """Run Pattern 3: Human-in-the-Loop - Fix Approval Agent."""
     print("\n" + "="*70)
     print("PATTERN 3: Human-in-the-Loop (Fix Approval Agent)")

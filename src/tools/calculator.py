@@ -20,6 +20,9 @@ def Calculator(expression: str) -> str:
     Exécute une expression mathématique simple et retourne le résultat.
     """
 
+    # Nettoyer l'expression (enlever les guillemets si présents)
+    expression = expression.strip("'\"")
+    
     logger.info(f"Outil 'calculatrice' appelé avec l'expression: '{expression}'")
     try:
         result = str(ne.evaluate(expression))
