@@ -7,8 +7,8 @@ suggest a solution, or escalate to a human.
 
 # Configuration - Tunable thresholds for agent behavior
 CONFIDENCE_THRESHOLDS = {
-    "auto_remediate": 0.90,  # 90% confidence required for auto-fix
-    "suggest": 0.70,         # 70% confidence required for suggestion
+    "auto_remediate": 0.75,  # BARRE PLUS BASSE POUR L'AUTOMATISATION
+    "suggest": 0.50,         # PLUS DE SUGGESTIONS
     "escalate": 0.0          # Fallback - always escalate if below suggest
 }
 
