@@ -23,15 +23,16 @@ def llm_agent_node(
     """Return a callable that runs the LLM with the provided toolset."""
 
     prompt = ChatPromptTemplate.from_messages(
-        [SystemMessage(content=system_prompt), ("placeholder", "{messages}")]
+        [("system", system_prompt), ("placeholder", "{messages}")]
     )
     llm_with_tools = llm.bind_tools(list(tools))
     llm_chain = prompt | llm_with_tools
 
-    def _node(state: AgentState) -> AgentState:
+    def _node(state: AgentState) -> dict:
         logger.info("Node 'llm_agent_node': processing alert %s", state.get("alert_info"))
         result: BaseMessage = llm_chain.invoke({"messages": state["messages"]})
         logger.info("LLM produced result: %s", result)
+        # Return only the new message, LangGraph's add_messages reducer handles the merge
         return {"messages": [result]}
 
     return _node

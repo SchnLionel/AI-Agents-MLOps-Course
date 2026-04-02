@@ -38,8 +38,9 @@ def finalize_diagnosis_node(
         )
         final_response = llm.invoke(rendered_messages)
         final_msg = final_response.content if hasattr(final_response, "content") else str(final_response)
+        # Return only the new message and update final_result
         return {
-            "messages": state["messages"] + [AIMessage(content=final_msg)],
+            "messages": [AIMessage(content=final_msg)],
             "final_result": final_msg,
         }
 
