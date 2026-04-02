@@ -114,7 +114,7 @@ async def diagnose_alert(payload: Dict[str, Any] = Body(...)):
     
     logger.info(f"Forwarding diagnostic request to Agent Core: {AGENT_CORE_SERVICE_URL}")
     try:
-        response = requests.post(AGENT_CORE_SERVICE_URL, json=payload, timeout=120)
+        response = requests.post(AGENT_CORE_SERVICE_URL, json=payload, timeout=300)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.RequestException as e:

@@ -42,8 +42,25 @@ SCENARIOS = [
             }
         },
         "expected_keywords": ["memory", "leak", "oom", "heap"]
+    },
+    {
+        "id": "disk_critical",
+        "name": "Disk Space Critical",
+        "alert": {
+            "labels": {
+                "alertname": "DiskSpaceCritical",
+                "service": "file-server",
+                "severity": "critical",
+                "instance": "fs-01"
+            },
+            "annotations": {
+                "summary": "Disk space above 95%",
+                "description": "File server disk critically full"
+            }
+        },
+        "expected_keywords": ["disk", "space", "storage", "full", "log"],
+        "max_latency": 60.0  # Urgent: needs faster diagnosis
     }
-    # Add more scenarios as needed
 ]
 
 @pytest.mark.parametrize("scenario", SCENARIOS)
@@ -62,7 +79,7 @@ def test_sla_compliance(service_urls, scenario):
     }
     
     start_time = time.time()
-    response = requests.post(f"{gateway_url}/diagnose_alert", json=alert_payload, timeout=180)
+    response = requests.post(f"{gateway_url}/diagnose_alert", json=alert_payload, timeout=300)
     latency = time.time() - start_time
     
     # 1. Availability/Success Check
@@ -72,7 +89,8 @@ def test_sla_compliance(service_urls, scenario):
     diagnosis = data.get("agent_diagnosis", "").lower()
     
     # 2. Latency Check
-    assert latency <= SLA_MAX_LATENCY_P95, f"Scenario {scenario['id']} took {latency:.2f}s, exceeding SLA of {SLA_MAX_LATENCY_P95}s"
+    max_latency = scenario.get("max_latency", SLA_MAX_LATENCY_P95)
+    assert latency <= max_latency, f"Scenario {scenario['id']} took {latency:.2f}s, exceeding SLA of {max_latency}s"
     
     # 3. Accuracy/Content Check
     found_keywords = [kw for kw in scenario["expected_keywords"] if kw in diagnosis]

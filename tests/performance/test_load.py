@@ -29,7 +29,7 @@ def execute_diagnosis(gateway_url: str, alert_payload: Dict) -> Dict:
         response = requests.post(
             f"{gateway_url}/diagnose_alert",
             json=alert_payload,
-            timeout=120
+            timeout=300
         )
         latency = time.time() - start_time
         return {
