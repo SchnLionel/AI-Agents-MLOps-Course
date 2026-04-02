@@ -49,7 +49,7 @@ def main():
     except Exception as e:
         print(f"Error: {e}")
         print("\nTip: Run this script inside the container:")
-        print("docker exec -it ai-agents-mlops-course-aiops-agent-monitor-1 python /app/tests/test_confidence_logic.py")
+        print("docker exec -it monitor-core python /app/tests/test_confidence_logic.py")
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,6 @@
-# AI Agents MLOps Course - Production-Ready AIOps Platform
+# Operations Diagnostic Platform - Production Monitoring Engine
 
-This repository contains the **complete implementation** of Chapters 5 & 6, featuring a production-grade AIOps diagnostic agent with comprehensive testing infrastructure.
+This repository contains the **complete implementation** of Chapters 5 & 6, featuring a production-grade Operations diagnostic agent with comprehensive testing infrastructure.
 
 ## 🏗️ Architecture Overview
 
@@ -85,7 +85,7 @@ graph LR
 docker compose up --build -d
 
 # Wait for services to be ready (~30 seconds)
-docker compose logs -f aiops-agent-monitor
+docker compose logs -f monitor-core
 ```
 
 ### 2. Load Sample Data
@@ -227,9 +227,9 @@ EMBEDDING_PROVIDER=huggingface
 EMBEDDING_MODEL=BAAI/bge-small-en-v1.5
 
 # Database
-POSTGRES_USER=aiops_user
-POSTGRES_PASSWORD=aiops_password
-POSTGRES_DB=aiops_db
+POSTGRES_USER=ops_user
+POSTGRES_PASSWORD=ops_password
+POSTGRES_DB=ops_db
 POSTGRES_HOST=postgres
 POSTGRES_PORT=5432
 
@@ -288,11 +288,11 @@ docker compose up -d --build
 docker compose ps
 
 # View specific service logs
-docker logs aiops-agent-monitor -f
-docker logs api-gateway -f
+docker logs monitor-core -f
+docker logs gateway -f
 
 # Execute command in container
-docker exec -it aiops-agent-monitor bash
+docker exec -it monitor-core bash
 
 # Monitor resource usage
 docker stats
@@ -394,7 +394,7 @@ The repository includes a comprehensive CI/CD workflow:
 
 The following features are planned or available for further implementation:
 
-- **LangGraph Checkpoint Metrics**: The `LangGraph Checkpoints - PostgreSQL Health` Grafana dashboard exists but requires instrumentation. To enable it, add Prometheus metrics in `src/aiops_agent_monitor/` to track:
+- **LangGraph Checkpoint Metrics**: The `LangGraph Checkpoints - PostgreSQL Health` Grafana dashboard exists but requires instrumentation. To enable it, add Prometheus metrics in `src/ops_agent_monitor/` to track:
   - Checkpoint save/load counts
   - Checkpoint sizes
   - Active thread counts

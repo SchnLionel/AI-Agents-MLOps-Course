@@ -7,7 +7,7 @@ from typing import Dict, Any
 
 # Service URLs from environment or defaults
 API_GATEWAY_URL = os.getenv("API_GATEWAY_URL", "http://localhost:8000")
-AGENT_CORE_URL = os.getenv("AGENT_CORE_URL", "http://localhost:8005")
+MONITOR_CORE_URL = os.getenv("MONITOR_CORE_URL", "http://localhost:8005")
 PROMETHEUS_TOOL_URL = os.getenv("PROMETHEUS_TOOL_URL", "http://localhost:8001")
 LOKI_TOOL_URL = os.getenv("LOKI_TOOL_URL", "http://localhost:8002")
 KNOWLEDGE_BASE_URL = os.getenv("KNOWLEDGE_BASE_URL", "http://localhost:8006")
@@ -16,7 +16,7 @@ KNOWLEDGE_BASE_URL = os.getenv("KNOWLEDGE_BASE_URL", "http://localhost:8006")
 def service_urls() -> Dict[str, str]:
     return {
         "gateway": API_GATEWAY_URL,
-        "agent": AGENT_CORE_URL,
+        "monitor": MONITOR_CORE_URL,
         "prometheus": PROMETHEUS_TOOL_URL,
         "loki": LOKI_TOOL_URL,
         "knowledge_base": KNOWLEDGE_BASE_URL

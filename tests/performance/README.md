@@ -1,6 +1,6 @@
 # Performance Tests
 
-This directory contains performance and load testing for the AIOps Agent system.
+This directory contains performance and load testing for the Operations Agent system.
 
 ## Test Categories
 
@@ -179,7 +179,7 @@ docker stats
 - Verify network connectivity
 
 ### High Error Rates
-- Check service logs: `docker logs aiops-agent-monitor`
+- Check service logs: `docker logs monitor-core`
 - Verify circuit breakers aren't tripping
 - Check resource constraints
 

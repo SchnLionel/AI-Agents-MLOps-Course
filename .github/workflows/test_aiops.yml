@@ -1,4 +1,4 @@
-name: AIOps Agent Production Validation
+name: Operations Agent Production Validation
 
 on:
   push:

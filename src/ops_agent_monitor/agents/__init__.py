@@ -1,4 +1,4 @@
-"""Agent factories for the AIOps monitor service."""
+"""Agent factories for the Operations monitor service."""
 
 from .diagnostic import build_diagnostic_agent
 

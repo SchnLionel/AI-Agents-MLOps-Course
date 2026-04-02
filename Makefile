@@ -38,7 +38,7 @@ diagnose:
 
 # Watch the interactions between microservices
 logs:
-	docker compose logs -f api-gateway aiops-agent-monitor prometheus-tool-service loki-tool-service knowledge-base-service
+	docker compose logs -f gateway monitor-core prometheus-tool-service loki-tool-service knowledge-base-service
 
 status:
 	@echo "Checking health of the microservices mesh..."

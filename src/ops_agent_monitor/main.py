@@ -1,4 +1,4 @@
-"""FastAPI entrypoint for the AIOps diagnostic agent service with PostgreSQL checkpointing."""
+"""FastAPI entrypoint for the Operations diagnostic agent service with PostgreSQL checkpointing."""
 
 from __future__ import annotations
 
@@ -30,52 +30,52 @@ def configure_logging() -> logging.Logger:
 
 logger = configure_logging()
 
-# Prometheus metrics -------------------------------------------------------
-LLM_MODEL_INFO = Gauge(
-    "aiops_monitor_agent_llm_model_info",
-    "Information about the LLM model used by the agent",
+# Metrics ------------------------------------------------------------------
+MONITOR_MODEL_INFO = Gauge(
+    "ops_monitor_model_info",
+    "Information about the model used by the monitor",
     ["model_name"],
 )
 
 API_REQUEST_COUNT = Counter(
-    "aiops_monitor_agent_api_requests_total",
-    "Total number of requests to the AIOps Monitor Agent API",
+    "ops_monitor_api_requests_total",
+    "Total number of requests to the Ops Monitor API",
 )
 
 API_REQUEST_LATENCY_SECONDS = Histogram(
-    "aiops_monitor_agent_api_request_latency_seconds",
-    "Latency of AIOps Monitor Agent API requests",
+    "ops_monitor_api_request_latency_seconds",
+    "Latency of Ops Monitor API requests",
     buckets=[0.1, 0.5, 1.0, 2.0, 5.0, 10.0],
 )
 
-AGENT_RUN_COUNT = Counter(
-    "aiops_monitor_agent_runs_total",
-    "Total number of agent diagnostic runs triggered",
+MONITOR_RUN_COUNT = Counter(
+    "ops_monitor_runs_total",
+    "Total number of monitor diagnostic runs triggered",
 )
 
-AGENT_ERROR_COUNT = Counter(
-    "aiops_monitor_agent_errors_total",
-    "Total number of agent execution errors",
+MONITOR_ERROR_COUNT = Counter(
+    "ops_monitor_errors_total",
+    "Total number of monitor execution errors",
     ["endpoint", "error_type"],
 )
 
-AGENT_STATUS_GAUGE = Gauge(
-    "aiops_monitor_agent_status",
-    "Current operational status of the AIOps Monitor Agent (1=online, 0=offline)",
+MONITOR_STATUS_GAUGE = Gauge(
+    "ops_monitor_status",
+    "Current operational status of the Ops Monitor (1=online, 0=offline)",
 )
 
-AGENT_DIAGNOSIS_COUNT = Counter(
-    "aiops_monitor_agent_diagnosis_total",
+MONITOR_DIAGNOSIS_COUNT = Counter(
+    "ops_monitor_diagnosis_total",
     "Count of diagnosis attempts",
     ["outcome"],
 )
 
-AGENT_STATUS_GAUGE.set(1)
+MONITOR_STATUS_GAUGE.set(1)
 
 def init_llm() -> ChatGroq:
     groq_key = os.getenv("GROQ_API_KEY")
     if not groq_key:
-        raise RuntimeError("GROQ_API_KEY environment variable not set for AIOps Agent Service.")
+        raise RuntimeError("GROQ_API_KEY environment variable not set for Operations Agent Service.")
 
     model_name = os.getenv("GROQ_MODEL_NAME")
     try:
@@ -84,8 +84,8 @@ def init_llm() -> ChatGroq:
         logger.exception("Error initialising LLM for deployed monitor agent")
         raise RuntimeError("Unable to initialise Groq LLM client") from exc
 
-    LLM_MODEL_INFO.labels(model_name=llm.model_name).set(1)
-    logger.info("LLM %s initialised successfully.", llm.model_name)
+    MONITOR_MODEL_INFO.labels(model_name=llm.model_name).set(1)
+    logger.info("Model %s initialised successfully.", llm.model_name)
     return llm
 
 
@@ -191,7 +191,7 @@ def render_alert_info(alert_payload: Dict[str, Any]) -> tuple[str, str]:
 
 
 app = FastAPI(
-    title="AIOps Diagnostic Agent Service",
+    title="Operations Diagnostic Agent Service",
     description="API for the MLOps Guard Agent, capable of diagnosing issues using Prometheus and Loki.",
 )
 
@@ -205,7 +205,7 @@ async def add_process_time_header(request: Request, call_next):
         response = await call_next(request)
         return response
     except Exception as exc:
-        AGENT_ERROR_COUNT.labels(endpoint=request.url.path, error_type=type(exc).__name__).inc()
+        MONITOR_ERROR_COUNT.labels(endpoint=request.url.path, error_type=type(exc).__name__).inc()
         logger.exception("Unhandled API error")
         raise
     finally:
@@ -218,11 +218,11 @@ async def add_process_time_header(request: Request, call_next):
 @app.get("/")
 async def read_root():
     logger.info("Received request to root endpoint.")
-    return {"message": "AIOps Diagnostic Agent Service is running and ready to diagnose alerts!"}
+    return {"message": "Operations Diagnostic Agent Service is running and ready to diagnose alerts!"}
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "service": "aiops-agent-monitor"}
+    return {"status": "ok", "service": "monitor-core"}
 
 @app.get("/ready")
 def ready():
@@ -281,7 +281,7 @@ def get_circuit_breaker_states():
 
 @app.post("/diagnose_alert")
 async def diagnose_alert(alert_payload: Dict[str, Any] = Body(...)):
-    AGENT_RUN_COUNT.inc()
+    MONITOR_RUN_COUNT.inc()
     alert_info, fingerprint = render_alert_info(alert_payload)
     logger.info("Received alert for diagnosis: %s", alert_info)
 
@@ -298,29 +298,29 @@ async def diagnose_alert(alert_payload: Dict[str, Any] = Body(...)):
         final_message = (
             messages[-1].content
             if messages
-            else final_state.get("final_result", "No final message from agent.")
+            else final_state.get("final_result", "No final message.")
         )
         outcome = classify_outcome(final_message, final_state.get("final_result"))
-        AGENT_DIAGNOSIS_COUNT.labels(outcome=outcome).inc()
-        logger.info("Agent diagnostic run completed. Outcome: %s", outcome)
+        MONITOR_DIAGNOSIS_COUNT.labels(outcome=outcome).inc()
+        logger.info("Monitor diagnostic run completed. Outcome: %s", outcome)
         return {
             "status": "success",
-            "agent_diagnosis": final_message,
+            "monitor_diagnosis": final_message,
             "thread_id": thread_id,
             "diagnosis_id": diagnosis_id,  # For feedback tracking
             "confidence_score": final_state.get("confidence_score"),
             "recommended_action": final_state.get("recommended_action"),
-            "current_agent_state": final_state,
+            "current_state": final_state,
         }
 
     except Exception as exc:
-        AGENT_ERROR_COUNT.labels(endpoint="/diagnose_alert", error_type=type(exc).__name__).inc()
-        AGENT_DIAGNOSIS_COUNT.labels(outcome="failed").inc()
-        logger.exception("AIOps agent diagnosis failure")
-        raise HTTPException(status_code=500, detail=f"Agent diagnostic failed: {exc}") from exc
+        MONITOR_ERROR_COUNT.labels(endpoint="/diagnose_alert", error_type=type(exc).__name__).inc()
+        MONITOR_DIAGNOSIS_COUNT.labels(outcome="failed").inc()
+        logger.exception("Monitor diagnosis failure")
+        raise HTTPException(status_code=500, detail=f"Diagnostic failed: {exc}") from exc
     finally:
         duration = time.time() - start_time
-        logger.info("Agent diagnostic run for alert took %.4f seconds.", duration)
+        logger.info("Monitor diagnostic run for alert took %.4f seconds.", duration)
 
 @app.post("/resume_diagnosis/{thread_id}")
 async def resume_diagnosis(thread_id: str):
@@ -349,8 +349,8 @@ async def resume_diagnosis(thread_id: str):
         return {
             "status": "success",
             "thread_id": thread_id,
-            "agent_diagnosis": final_message,
-            "current_agent_state": final_state,
+            "monitor_diagnosis": final_message,
+            "current_state": final_state,
         }
     
     except Exception as exc:

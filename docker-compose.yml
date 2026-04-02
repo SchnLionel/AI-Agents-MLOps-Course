@@ -1,21 +1,21 @@
 services:
   # --- Edge Services ---
-  api-gateway:
-    container_name: api-gateway
+  gateway:
+    container_name: gateway
     build: ./src/api_gateway
     ports:
       - "8000:8000"
     environment:
-      - AGENT_CORE_SERVICE_URL=http://aiops-agent-monitor:8005/diagnose_alert
+      - MONITOR_CORE_SERVICE_URL=http://monitor-core:8005/diagnose_alert
     depends_on:
-      aiops-agent-monitor:
+      monitor-core:
         condition: service_healthy
     restart: always
 
   # --- Agent Layer ---
-  aiops-agent-monitor:
-    container_name: aiops-agent-monitor
-    build: ./src/aiops_agent_monitor
+  monitor-core:
+    container_name: monitor-core
+    build: ./src/ops_agent_monitor
     ports:
       - "8005:8005"
     environment:
@@ -23,7 +23,7 @@ services:
       - GROQ_MODEL_NAME=${GROQ_MODEL_NAME}
       - LANGCHAIN_TRACING_V2=${LANGCHAIN_TRACING_V2:-true}
       - LANGCHAIN_API_KEY=${LANGCHAIN_API_KEY}
-      - LANGCHAIN_PROJECT=AIOps-Agent-Core
+      - LANGCHAIN_PROJECT=Ops-Monitor-Core
       - POSTGRES_DB_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
       - DEPLOYMENT_MODE=microservices
       - PROMETHEUS_TOOL_SERVICE_URL=http://prometheus-tool-service:8001

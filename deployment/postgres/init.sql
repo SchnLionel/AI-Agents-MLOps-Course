@@ -1,4 +1,4 @@
--- PostgreSQL initialization script for AIOps Agent
+-- PostgreSQL initialization script for Operations Agent
 -- Creates pgvector extension and knowledge base schema
 -- This runs automatically when the container first starts
 

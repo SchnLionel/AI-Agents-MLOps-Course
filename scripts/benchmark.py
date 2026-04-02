@@ -79,7 +79,7 @@ def run_benchmark(gateway_url, num_requests, concurrency, alert_payload):
     return report
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="AIOps Agent Performance Benchmark")
+    parser = argparse.ArgumentParser(description="Operations Agent Performance Benchmark")
     parser.add_argument("--url", default="http://localhost:8000", help="API Gateway URL")
     parser.add_argument("--requests", type=int, default=10, help="Total requests to run")
     parser.add_argument("--concurrency", type=int, default=2, help="Concurrency level")

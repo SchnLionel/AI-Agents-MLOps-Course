@@ -1,6 +1,6 @@
 # PostgreSQL Deployment for Chapter 4
 
-This folder contains PostgreSQL initialization and data loading scripts for the AIOps Agent knowledge base.
+This folder contains PostgreSQL initialization and data loading scripts for the Operations Agent knowledge base.
 
 ## Files
 

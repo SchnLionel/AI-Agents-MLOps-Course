@@ -6,7 +6,7 @@ outside of the agent workflow. Use it to understand semantic search
 and test different queries.
 
 Usage:
-    docker exec ai-agents-mlops-course-aiops-agent-monitor-1 python tests/test_rag_query.py
+    docker exec monitor-core python tests/test_rag_query.py
 """
 
 import sys

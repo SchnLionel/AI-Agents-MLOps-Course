@@ -1,4 +1,4 @@
-"""Configuration module for AIOps Agent Monitor.
+"""Configuration module for Operations Agent Monitor.
 
 This module centralizes all configuration, making it easy to switch between:
 - Chapter 4: Monolithic deployment (direct database/service access)
@@ -22,7 +22,7 @@ GROQ_MODEL_NAME = os.getenv("GROQ_MODEL_NAME", "mixtral-8x7b-32768")
 # LangSmith Tracing
 LANGCHAIN_TRACING_V2 = os.getenv("LANGCHAIN_TRACING_V2", "true")
 LANGCHAIN_API_KEY = os.getenv("LANGCHAIN_API_KEY")
-LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT", "AIOps Monitor Agent")
+LANGCHAIN_PROJECT = os.getenv("LANGCHAIN_PROJECT", "Operations Monitor Agent")
 
 # PostgreSQL Configuration (for checkpoints)
 POSTGRES_HOST = os.getenv("POSTGRES_HOST", "postgres")

@@ -16,7 +16,7 @@ from pathlib import Path
 from datetime import datetime
 
 # Add src to path
-sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "aiops_agent_monitor"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "src" / "ops_agent_monitor"))
 
 print("=" * 70)
 print("Chapter 4 - RAG and Feedback System Tests")

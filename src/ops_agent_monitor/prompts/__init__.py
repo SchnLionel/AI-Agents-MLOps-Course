@@ -1,4 +1,4 @@
-"""Prompt templates for the AIOps agent."""
+"""Prompt templates for the Operations agent."""
 
 from .diagnostic import (
     DIAGNOSTIC_SYSTEM_PROMPT,

@@ -73,7 +73,7 @@
         {
           "disableTextWrap": false,
           "editorMode": "code",
-          "expr": "aiops_monitor_agent_llm_model_info",
+          "expr": "ops_monitor_agent_llm_model_info",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "{{model_name}}",
@@ -145,12 +145,12 @@
       "pluginVersion": "12.1.1",
       "targets": [
         {
-          "expr": "rate(aiops_monitor_agent_api_requests_total[5m])",
+          "expr": "rate(ops_monitor_agent_api_requests_total[5m])",
           "legendFormat": "Agent API Request Rate",
           "refId": "A"
         }
       ],
-      "title": "AIOps Monitor Agent - API Request Rate (5m)",
+      "title": "Operations Monitor Agent - API Request Rate (5m)",
       "type": "stat"
     },
     {
@@ -243,12 +243,12 @@
       "pluginVersion": "12.1.1",
       "targets": [
         {
-          "expr": "histogram_quantile(0.95, sum(rate(aiops_monitor_agent_api_request_latency_seconds_bucket[5m])) by (le))",
+          "expr": "histogram_quantile(0.95, sum(rate(ops_monitor_agent_api_request_latency_seconds_bucket[5m])) by (le))",
           "legendFormat": "Agent API P95 Latency",
           "refId": "A"
         }
       ],
-      "title": "AIOps Monitor Agent - P95 API Latency (5m)",
+      "title": "Operations Monitor Agent - P95 API Latency (5m)",
       "type": "timeseries"
     },
     {
@@ -302,12 +302,12 @@
       "pluginVersion": "12.1.1",
       "targets": [
         {
-          "expr": "sum(rate(aiops_monitor_agent_runs_total[5m]))",
+          "expr": "sum(rate(ops_monitor_agent_runs_total[5m]))",
           "legendFormat": "Agent Runs Rate",
           "refId": "A"
         }
       ],
-      "title": "AIOps Monitor Agent - Runs Rate (5m)",
+      "title": "Operations Monitor Agent - Runs Rate (5m)",
       "type": "stat"
     },
     {
@@ -341,12 +341,12 @@
           "datasource": "Loki",
           "direction": "backward",
           "editorMode": "builder",
-          "expr": "{job=\"docker\", container_name=\"ai-agents-mlops-course-aiops-agent-monitor-1\"}",
+          "expr": "{job=\"docker\", container_name=\"ai-agents-mlops-course-monitor-core-1\"}",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "AIOps Monitor Agent - Logs",
+      "title": "Operations Monitor Agent - Logs",
       "type": "logs"
     }
   ],
@@ -363,7 +363,7 @@
   },
   "timepicker": {},
   "timezone": "",
-  "title": "AIOps Monitor Agent Health Dashboard",
-  "uid": "aiops_monitor_agent_health",
+  "title": "Operations Monitor Agent Health Dashboard",
+  "uid": "ops_monitor_agent_health",
   "version": 2
 }
