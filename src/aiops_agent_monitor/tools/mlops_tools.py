@@ -16,6 +16,18 @@ PROMETHEUS_URL = os.getenv("PROMETHEUS_URL", "http://prometheus:9090")
 LOKI_URL = os.getenv("LOKI_URL", "http://loki:3100") 
 GRAFANA_URL = os.getenv("GRAFANA_URL", "http://grafana:3000") 
 
+ALLOWED_PROMQL_FUNCTIONS = {
+    "rate", "irate", "sum", "avg", "max", "min", "count",
+    "increase", "delta", "avg_over_time", "max_over_time"
+}
+
+def validate_promql_query(query: str) -> None:
+    """Validate PromQL query only uses allowed functions."""
+    functions_used = set(re.findall(r'(\w+)\(', query))
+    disallowed = functions_used - ALLOWED_PROMQL_FUNCTIONS
+    if disallowed:
+        raise ValueError(f"Query uses disallowed PromQL functions: {disallowed}")
+
 # --- Prometheus Query Tool ---
 class PrometheusQueryInput(BaseModel):
     """Schema for PrometheusQuery tool input."""
@@ -39,8 +51,10 @@ def PrometheusQuery(query: str, time_range_minutes: int, step_seconds: int, targ
     try:
         if time_range_minutes <= 0:
             raise ValueError("time_range_minutes must be positive.")
-        if step_seconds <= 0:
-            raise ValueError("step_seconds must be positive.")
+        if step_seconds < 10:
+            raise ValueError("step_seconds must be at least 10 to avoid overloading Prometheus.")
+
+        validate_promql_query(query)
 
         full_query = query
         end_time = int(time.time())
