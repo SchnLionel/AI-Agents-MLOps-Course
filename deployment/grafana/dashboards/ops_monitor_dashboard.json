@@ -341,7 +341,7 @@
           "datasource": "Loki",
           "direction": "backward",
           "editorMode": "builder",
-          "expr": "{job=\"docker\", container_name=\"ai-agents-mlops-course-monitor-core-1\"}",
+          "expr": "{job=\"docker\", container_name=\"ops-diagnostic-platform-monitor-core-1\"}",
           "queryType": "range",
           "refId": "A"
         }
