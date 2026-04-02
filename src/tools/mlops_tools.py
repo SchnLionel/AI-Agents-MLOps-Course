@@ -28,11 +28,13 @@ class CheckAlertSeverityInput(BaseModel):
     """Input schema for CheckAlertSeverity tool."""
     alert_description: str = Field(description="Text description of the alert to evaluate.")
 
-def check_alert_severity(alert_description: str) -> Literal["critical", "medium", "low"]:
+def check_alert_severity(alert_description: str) -> Literal["critical", "urgent", "medium", "low"]:
     """Simulate determining alert severity based on its description."""
     logger.info(f"Tool 'CheckAlertSeverity' called for alert: '{alert_description}'")
     alert_description_lower = alert_description.lower()
-    if "critical" in alert_description_lower or "outage" in alert_description_lower or "down" in alert_description_lower:
+    if "urgent" in alert_description_lower:
+        return "urgent"
+    elif "critical" in alert_description_lower or "outage" in alert_description_lower or "down" in alert_description_lower:
         return "critical"
     elif "warning" in alert_description_lower or "high" in alert_description_lower or "elevated" in alert_description_lower:
         return "medium"

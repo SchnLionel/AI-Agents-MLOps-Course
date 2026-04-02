@@ -10,6 +10,7 @@ from src.nodes.conditional_agent import (
     handle_critical_alert_node,
     handle_low_alert_node,
     handle_medium_alert_node,
+    handle_urgent_alert_node,
     route_alert,
 )
 from src.state import AgentState
@@ -25,6 +26,7 @@ def create_alert_router_agent(llm_client: ChatGroq, tools_for_graph: List[Tool])
     workflow.add_node("handle_critical", handle_critical_alert_node)
     workflow.add_node("handle_medium", handle_medium_alert_node)
     workflow.add_node("handle_low", handle_low_alert_node)
+    workflow.add_node("handle_urgent", handle_urgent_alert_node)
 
     workflow.set_entry_point("evaluate_alert")
     workflow.add_conditional_edges(
@@ -32,12 +34,14 @@ def create_alert_router_agent(llm_client: ChatGroq, tools_for_graph: List[Tool])
         route_alert,      # Function that decides the destination
         {                 # Mapping of function outputs to node names
             "handle_critical": "handle_critical",
+            "handle_urgent": "handle_urgent",
             "handle_medium": "handle_medium",
             "handle_low": "handle_low",
         },
     )
     # All branches lead to an end, so all are finish points
     workflow.set_finish_point("handle_critical")
+    workflow.set_finish_point("handle_urgent")
     workflow.set_finish_point("handle_medium")
     workflow.set_finish_point("handle_low")
 

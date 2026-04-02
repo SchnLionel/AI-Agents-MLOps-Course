@@ -95,6 +95,15 @@ def run_conditional_pattern(llm: ChatOpenAI) -> None:
     result_critical = agent.invoke(state_critical)
     print(f"✓ Result: {result_critical['messages'][-1].content}")
 
+    # Test urgent alert
+    print("\n[Test: Urgent Alert]")
+    state_urgent = AgentState(
+        messages=[HumanMessage(content="Alert: URGENT: disk space almost full!")],
+        alert_info="URGENT: disk space almost full!"
+    )
+    result_urgent = agent.invoke(state_urgent)
+    print(f"✓ Result: {result_urgent['messages'][-1].content}")
+
     # Test medium alert
     print("\n[Test 2: Medium Alert]")
     state_medium = AgentState(

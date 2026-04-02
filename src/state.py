@@ -19,7 +19,7 @@ class AgentState(TypedDict):
 
     # --- Specific fields for this exercise (will be used by different patterns) ---
     alert_info: str
-    alert_severity: Literal["critical", "medium", "low", "unknown"]
+    alert_severity: Literal["critical", "urgent", "medium", "low", "unknown"]
     
     investigation_query: str
     investigation_step: int

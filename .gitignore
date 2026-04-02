@@ -45,6 +45,6 @@ coverage.xml
 # Personal or sensitive files
 *.env
 src/simple_chat.py
-tests/
+# tests/
 src/nodes/linear_agent/generate_report_bis.py
 src/nodes/linear_agent/get_cpu_metrics_bis.py

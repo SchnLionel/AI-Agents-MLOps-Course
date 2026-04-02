@@ -10,6 +10,8 @@ def route_alert(state: AgentState) -> str:
     logger.info("Routing alert based on severity: %s", severity)
     if severity == "critical":
         return "handle_critical"
+    elif severity == "urgent":
+        return "handle_urgent"
     elif severity == "medium":
         return "handle_medium"
     else:
